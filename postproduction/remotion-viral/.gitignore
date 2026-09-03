@@ -1,0 +1,6 @@
+node_modules/
+public/source.mp4
+out/
+sfx/
+sound_mix.ffmpeg
+sound_manifest.json

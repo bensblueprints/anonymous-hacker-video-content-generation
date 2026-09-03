@@ -27,6 +27,7 @@ Create photorealistic, paragraph-aware vertical videos featuring one consistent 
 
 - Python 3.10+ and Pillow.
 - `ffmpeg` and `ffprobe` on `PATH`.
+- Node.js and npm when using the optional Remotion post-production example.
 - `FAL_KEY` for live image/video generation; validation, dry-run, and QC do not require it.
 - A narration file, timed scene plan, and real in-hand reference when product scale matters.
 
@@ -56,6 +57,7 @@ python3 scripts/anonymous_hacker_video.py qc-sheet --videos output/scene_001_raw
 5. **Generate selectively.** Chain the previous final frame only within one coherent action/location. Completion criterion: config validation rejects cross-location chaining.
 6. **Keep pace.** Place a purposeful prop action, head turn, lighting beat, camera beat, or clean cut every 2–4 seconds. Avoid slow idle holds, drifting, swaying, and backward walking. Completion criterion: each 10–12 second clip contains 2–3 readable beats.
 7. **Render and inspect.** Allocate clip frames from cumulative narration boundaries at 24 fps (never round every clip independently), center-crop before scaling to 1080×1920, attach narration, and build a four-frame-per-clip QC sheet. Completion criterion: the total frame count matches the rounded final narration boundary; inspect product size, hands, face/mask, duplicates, direction of travel, and semantic continuity before delivery.
+8. **Optional post-production.** Use `postproduction/remotion-viral/` to layer brief glitch/static accents at clip breaks, color-wash titles at major topic cuts, and procedural FFmpeg sounds beneath the untouched narration. Preview one major transition first and retain the exact composition frame count. Completion criterion: narration remains intelligible and final duration/frame count are unchanged.
 
 ## Character Lock
 
@@ -86,6 +88,7 @@ Reject and regenerate a clip if the product grows, duplicates, or becomes a tabl
 - Chaining every clip creates implausible walking and wrong locations.
 - Moving a product toward the lens can look like physical enlargement even when anatomy remains valid.
 - H3 output is frame-quantized at 24 fps; narration controls the final exact runtime.
+- Remotion can exhaust 16 GB RAM at high concurrency on a five-minute 1080×1920 render; use `--concurrency=2` after validating a short preview.
 - AI-generated laptop text can become operational-looking gibberish. Request blank or abstract non-legible text and reject unsafe frames.
 
 ## Verification

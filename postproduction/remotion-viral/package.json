@@ -1,0 +1,23 @@
+{
+  "name": "remotion-viral",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Flipper Zero Reel - Remotion visual effects composition",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "tsc --noEmit",
+    "render": "remotion render FlipperZeroReel out/FLIPPER_ZERO_REEL_VFX.mp4 --concurrency=4",
+    "render:test": "remotion render FlipperZeroReel out/test_probes.mp4 --frames=2000-2360 --concurrency=4",
+    "compositions": "remotion compositions src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.227",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.227"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}

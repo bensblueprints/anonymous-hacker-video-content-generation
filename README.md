@@ -26,6 +26,7 @@ The solution is staged reference editing plus semantic scene planning:
 - fal.ai MiniMax H3 Max image-to-video
 - Selective final-frame chaining
 - Cumulative-boundary 24 fps timing and 1080×1920 rendering with FFmpeg, preventing long-video frame drift
+- Optional frame-accurate Remotion glitch/color/title pass with procedural FFmpeg transition sound design
 - Narration offset and assembly
 - Four-sample-per-clip QC sheets
 - Offline config validation and dry-run
@@ -110,6 +111,10 @@ The example plan demonstrates:
 - a chained connected-laptop continuation
 - purposeful beats every 2–4 seconds
 - no backward walking
+
+## Optional viral post-production
+
+`postproduction/remotion-viral/` contains a deterministic 7,103-frame example that keeps the accepted video continuous while adding short static/RGB accents, major-topic color washes, safe-margin title cards, and procedural FFmpeg sound effects mixed beneath narration. Render a short transition preview first, then use low Remotion concurrency on 16 GB machines.
 
 ## Safety
 
