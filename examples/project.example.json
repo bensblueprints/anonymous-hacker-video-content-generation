@@ -1,0 +1,16 @@
+{
+  "project_name": "Flipper Zero Ethical Hacking Reel",
+  "workdir": "../output",
+  "narration": "../assets/narration.wav",
+  "narration_offset": 0.0,
+  "character": {
+    "gender": "adult male",
+    "mask": "clean white Guy Fawkes mask",
+    "outfit": "hood-up black hoodie, gloves, cargo pants, combat boots"
+  },
+  "product": {
+    "name": "Flipper Zero",
+    "dimensions_mm": [100, 40, 25],
+    "appearance": "White angular casing, rectangular screen on the left, orange circular directional pad and separate small orange button on the right."
+  }
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "id": 1,
+    "topic": "Opening warning",
+    "location": "green-lit cybersecurity operations room",
+    "duration": 11,
+    "target_seconds": 10.9,
+    "chain_from_previous": false,
+    "input_image": "../assets/opening-host.png",
+    "action": "Walk forward naturally while holding the compact device close to the chest; never reverse direction.",
+    "beats": [
+      "0–3s: grounded forward step",
+      "3–7s: brief device presentation without lens-thrust",
+      "7–11s: stop and serious head nod"
+    ]
+  },
+  {
+    "id": 2,
+    "topic": "Permission disclaimer",
+    "location": "green-lit cybersecurity operations room",
+    "duration": 8,
+    "target_seconds": 7.48,
+    "chain_from_previous": true,
+    "action": "Remain planted, keep the product fixed, and deliver a warning through head and lighting beats.",
+    "beats": [
+      "0–3s: serious head turn",
+      "3–6s: red monitor-light warning beat",
+      "6–8s: return gaze to camera"
+    ]
+  },
+  {
+    "id": 3,
+    "topic": "Bad USB introduction",
+    "location": "owned cybersecurity lab desk",
+    "duration": 11,
+    "target_seconds": 11.21,
+    "chain_from_previous": false,
+    "input_image": "../assets/badusb-desk.png",
+    "action": "Seated in a chair, connect one USB-C cable from the owned laptop to the compact device.",
+    "beats": [
+      "0–3s: show cable and device at real scale",
+      "3–7s: connect the cable once",
+      "7–11s: glance from device to laptop screen"
+    ],
+    "extra_prompt": "The laptop shows a harmless blank text editor with no readable commands."
+  },
+  {
+    "id": 4,
+    "topic": "Controlled-lab keyboard lesson",
+    "location": "owned cybersecurity lab desk",
+    "duration": 11,
+    "target_seconds": 11.31,
+    "chain_from_previous": true,
+    "action": "Set the connected device beside the laptop and point once toward a harmless blank text editor.",
+    "beats": [
+      "0–3s: lower connected device to desk",
+      "3–7s: laptop cursor blinks with abstract non-legible marks",
+      "7–11s: point to screen and return hand to desk"
+    ]
+  }
+]
