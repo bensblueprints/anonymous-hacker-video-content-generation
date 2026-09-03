@@ -18,6 +18,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any
 
@@ -319,6 +320,32 @@ def probe_duration(path: Path) -> float:
     return float(json.loads(result.stdout)["format"]["duration"])
 
 
+def probe_frame_count(path: Path) -> int:
+    result = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0", "-count_frames", "-show_entries", "stream=nb_read_frames", "-of", "default=nw=1:nk=1", str(path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return int(result.stdout.strip())
+
+
+def frame_boundary(seconds: float | Decimal, fps: int = FPS) -> int:
+    return int((Decimal(str(seconds)) * fps).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def cumulative_frame_counts(scenes: list[dict[str, Any]], offset: float = 0.0, fps: int = FPS) -> list[int]:
+    cursor_seconds = Decimal(str(offset))
+    cursor_frame = frame_boundary(cursor_seconds, fps)
+    counts: list[int] = []
+    for scene in scenes:
+        cursor_seconds += Decimal(str(scene["target_seconds"]))
+        end_frame = frame_boundary(cursor_seconds, fps)
+        counts.append(end_frame - cursor_frame)
+        cursor_frame = end_frame
+    return counts
+
+
 def extract_last_frame(video: Path, output: Path) -> None:
     run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-sseof", "-0.08", "-i", str(video), "-frames:v", "1", str(output)])
 
@@ -409,23 +436,31 @@ def cmd_generate(args: argparse.Namespace) -> int:
     return 0
 
 
-def render_command(raw: Path, output: Path, source_duration: float, target: float) -> list[str]:
+def render_command(raw: Path, output: Path, source_frames: int, target_frames: int) -> list[str]:
+    ratio = target_frames / source_frames
     video_filter = (
-        f"setpts=({target:.9f}/{source_duration:.9f})*PTS,fps={FPS},"
         "crop=ih*9/16:ih:(iw-ih*9/16)/2:0,"
-        "scale=1080:1920:flags=lanczos,format=yuv420p"
+        "scale=1080:1920:flags=lanczos,"
+        f"setpts={ratio:.12f}*PTS,fps={FPS},"
+        f"tpad=stop_mode=clone:stop_duration=1,trim=end_frame={target_frames},"
+        "setpts=PTS-STARTPTS,format=yuv420p"
     )
-    return ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(raw), "-vf", video_filter, "-an", "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-movflags", "+faststart", str(output)]
+    return ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(raw), "-vf", video_filter, "-frames:v", str(target_frames), "-an", "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", "-x264-params", "keyint=48:min-keyint=48:scenecut=0", "-movflags", "+faststart", str(output)]
 
 
 def cmd_render(args: argparse.Namespace) -> int:
     project, scenes = validate_configs(args.project, args.scenes)
     out = output_dir(args.project, project)
+    offset = float(args.offset if args.offset is not None else project.get("narration_offset", 0))
+    target_frames = cumulative_frame_counts(scenes, offset)
     rendered: list[Path] = []
-    for scene in scenes:
+    for scene, wanted_frames in zip(scenes, target_frames):
         scene_id = int(scene["id"]); raw = out / f"scene_{scene_id:03d}_raw.mp4"; final = out / f"scene_{scene_id:03d}_reel.mp4"
         if not raw.exists(): raise ConfigError(f"Missing raw clip: {raw}")
-        run(render_command(raw, final, probe_duration(raw), float(scene["target_seconds"])))
+        run(render_command(raw, final, probe_frame_count(raw), wanted_frames))
+        actual_frames = probe_frame_count(final)
+        if actual_frames != wanted_frames:
+            raise RuntimeError(f"Scene {scene_id}: expected {wanted_frames} rendered frames, got {actual_frames}")
         rendered.append(final)
     concat_file = out / "concat.txt"
     concat_file.write_text("".join(f"file '{str(p).replace(chr(39), chr(39)+chr(92)+chr(39)+chr(39))}'\n" for p in rendered), encoding="utf-8")
@@ -435,7 +470,6 @@ def cmd_render(args: argparse.Namespace) -> int:
     if not narration_value: raise ConfigError("Narration path is required for render")
     narration = resolve(args.project.parent, narration_value)
     total = sum(float(s["target_seconds"]) for s in scenes)
-    offset = float(args.offset if args.offset is not None else project.get("narration_offset", 0))
     final_output = args.output or (out / "final_reel_1080x1920.mp4")
     run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(silent), "-ss", f"{offset:.3f}", "-i", str(narration), "-map", "0:v:0", "-map", "1:a:0", "-t", f"{total:.3f}", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(final_output)])
     print(final_output); return 0

@@ -25,7 +25,7 @@ The solution is staged reference editing plus semantic scene planning:
 - fal.ai Nano Banana image editing
 - fal.ai MiniMax H3 Max image-to-video
 - Selective final-frame chaining
-- 24 fps timing and 1080×1920 rendering with FFmpeg
+- Cumulative-boundary 24 fps timing and 1080×1920 rendering with FFmpeg, preventing long-video frame drift
 - Narration offset and assembly
 - Four-sample-per-clip QC sheets
 - Offline config validation and dry-run

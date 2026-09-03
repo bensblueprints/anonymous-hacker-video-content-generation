@@ -81,13 +81,23 @@ def test_frame_quantization():
 
 
 def test_render_command_is_list_form_and_center_crops(tmp_path):
-    command = MODULE.render_command(tmp_path / "raw.mp4", tmp_path / "out.mp4", 11.552, 10.9)
+    command = MODULE.render_command(tmp_path / "raw.mp4", tmp_path / "out.mp4", 277, 262)
     assert isinstance(command, list)
     assert command[0] == "ffmpeg"
     video_filter = command[command.index("-vf") + 1]
     assert "crop=ih*9/16:ih:(iw-ih*9/16)/2:0" in video_filter
     assert "scale=1080:1920" in video_filter
     assert "format=yuv420p" in video_filter
+    assert "trim=end_frame=262" in video_filter
+    assert command[command.index("-frames:v") + 1] == "262"
+
+
+def test_cumulative_frame_counts_prevent_long_timeline_drift():
+    scenes = [{"target_seconds": value} for value in (9.28, 8.49, 10.49, 11.01)]
+    counts = MODULE.cumulative_frame_counts(scenes, offset=62.63, fps=24)
+    expected = MODULE.frame_boundary(101.90, 24) - MODULE.frame_boundary(62.63, 24)
+    assert sum(counts) == expected
+    assert all(count > 0 for count in counts)
 
 
 def test_dry_run_needs_no_fal_key():

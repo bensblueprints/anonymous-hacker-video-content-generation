@@ -55,7 +55,7 @@ python3 scripts/anonymous_hacker_video.py qc-sheet --videos output/scene_001_raw
 4. **Create topic frames.** At a paragraph/topic/location change, generate a new first frame using `topic-frame`; do not force the prior final frame into the wrong environment. Completion criterion: every `chain_from_previous: false` scene has its own intentional input image.
 5. **Generate selectively.** Chain the previous final frame only within one coherent action/location. Completion criterion: config validation rejects cross-location chaining.
 6. **Keep pace.** Place a purposeful prop action, head turn, lighting beat, camera beat, or clean cut every 2–4 seconds. Avoid slow idle holds, drifting, swaying, and backward walking. Completion criterion: each 10–12 second clip contains 2–3 readable beats.
-7. **Render and inspect.** Retime at 24 fps, center-crop before scaling to 1080×1920, attach narration, and build a four-frame-per-clip QC sheet. Completion criterion: inspect product size, hands, face/mask, duplicates, direction of travel, and semantic continuity before delivery.
+7. **Render and inspect.** Allocate clip frames from cumulative narration boundaries at 24 fps (never round every clip independently), center-crop before scaling to 1080×1920, attach narration, and build a four-frame-per-clip QC sheet. Completion criterion: the total frame count matches the rounded final narration boundary; inspect product size, hands, face/mask, duplicates, direction of travel, and semantic continuity before delivery.
 
 ## Character Lock
 
