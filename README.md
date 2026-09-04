@@ -114,7 +114,7 @@ The example plan demonstrates:
 
 ## Optional viral post-production
 
-`postproduction/remotion-viral/` contains a deterministic 7,103-frame example that keeps the accepted video continuous while adding short static/RGB accents, major-topic color washes, safe-margin title cards, and procedural FFmpeg sound effects mixed beneath narration. Render a short transition preview first, then use low Remotion concurrency on 16 GB machines.
+`postproduction/remotion-viral/` contains a deterministic 7,103-frame example that keeps the accepted video continuous while adding short static/RGB accents, major-topic color washes, safe-margin title cards, and procedural FFmpeg sound effects mixed beneath narration. It also includes 49 narration-synchronized presentation cards that summarize each capability, misuse warning, and safe-lab alternative as it is spoken; enumerated points reveal sequentially like a slide deck rather than behaving as full captions. Render representative card stills first, then use 600–900-frame ranges at low Remotion concurrency on 16 GB machines.
 
 ## Safety
 

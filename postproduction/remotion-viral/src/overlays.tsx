@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, Easing, useCurrentFrame} from 'remotion';
 import {MAJOR_TOPICS, FPS, hashNoise} from './timeline';
+import type {CapabilityCardData} from './capabilities';
 
 // ============================================
 // Overlays: opening hook, major title labels, CTA
@@ -260,6 +261,140 @@ export const EndCta: React.FC<{startFrame: number}> = ({startFrame}) => {
           }}
         >
           FLIPPER ZERO · USE IT ETHICALLY
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --------------------------------------------
+// Narration-synchronized presentation card.
+// Concise capability/risk/safe-lab summaries, not subtitles.
+// --------------------------------------------
+export const CapabilityCard: React.FC<{
+  card: CapabilityCardData;
+  index: number;
+  total: number;
+}> = ({card, index, total}) => {
+  const frame = useCurrentFrame();
+  const startFrame = Math.round(card.startSec * FPS);
+  const endFrame = Math.round(card.endSec * FPS);
+  const local = frame - startFrame;
+  const duration = endFrame - startFrame;
+  if (local < 0 || local >= duration) return null;
+
+  const enter = interpolate(local, [0, 9], [0, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.back(1.25)),
+  });
+  const fadeOut = interpolate(local, [Math.max(10, duration - 8), duration], [1, 0], {
+    extrapolateLeft: 'clamp',
+  });
+  const opacity = Math.min(enter, fadeOut);
+  const slideDirection = card.position === 'lower' ? 1 : -1;
+  const translateY = (1 - enter) * 54 * slideDirection;
+  const headlineSize = card.headline.length > 38 ? 55 : card.headline.length > 28 ? 62 : 72;
+  const justifyContent =
+    card.position === 'upper' ? 'flex-start' : card.position === 'lower' ? 'flex-end' : 'center';
+
+  return (
+    <AbsoluteFill
+      style={{
+        pointerEvents: 'none',
+        alignItems: 'center',
+        justifyContent,
+        padding: '220px 68px 285px',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: 944,
+          opacity,
+          transform: `translateY(${translateY}px) scale(${0.94 + enter * 0.06})`,
+          background: 'linear-gradient(135deg, rgba(5,10,15,0.93), rgba(10,17,24,0.83))',
+          border: `2px solid ${card.accent}99`,
+          borderLeft: `14px solid ${card.accent}`,
+          borderRadius: 16,
+          padding: '30px 40px 28px',
+          boxShadow: `0 18px 58px rgba(0,0,0,0.65), 0 0 34px ${card.accent}44`,
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14}}>
+          <div
+            style={{
+              fontFamily: MONO,
+              fontWeight: 800,
+              fontSize: 25,
+              lineHeight: 1,
+              letterSpacing: 5,
+              color: card.accent,
+            }}
+          >
+            {card.kicker}
+          </div>
+          <div style={{fontFamily: MONO, fontSize: 21, color: '#9fb0bc', letterSpacing: 2}}>
+            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+          </div>
+        </div>
+
+        <div
+          style={{
+            fontFamily: SANS,
+            fontWeight: 900,
+            fontSize: headlineSize,
+            lineHeight: 1.02,
+            letterSpacing: -1.2,
+            color: '#fff',
+            textShadow: '0 4px 18px rgba(0,0,0,0.9)',
+          }}
+        >
+          {card.headline}
+        </div>
+
+        {card.bullets?.length ? (
+          <div style={{marginTop: 20, display: 'flex', flexDirection: 'column', gap: 10}}>
+            {card.bullets.map((bullet, bulletIndex) => {
+              const revealAt = 12 + bulletIndex * 14;
+              const bulletIn = interpolate(local, [revealAt, revealAt + 7], [0, 1], {
+                extrapolateLeft: 'clamp',
+                extrapolateRight: 'clamp',
+                easing: Easing.out(Easing.cubic),
+              });
+              return (
+                <div
+                  key={bullet}
+                  style={{
+                    display: 'flex',
+                    gap: 15,
+                    alignItems: 'center',
+                    opacity: bulletIn,
+                    transform: `translateX(${(1 - bulletIn) * 30}px)`,
+                    fontFamily: SANS,
+                    fontWeight: 700,
+                    fontSize: 32,
+                    lineHeight: 1.12,
+                    color: '#e7edf1',
+                  }}
+                >
+                  <span style={{color: card.accent, fontFamily: MONO, fontSize: 28}}>▸</span>
+                  <span>{bullet}</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
+        <div style={{height: 5, background: 'rgba(255,255,255,0.12)', marginTop: 23, overflow: 'hidden'}}>
+          <div
+            style={{
+              height: '100%',
+              width: `${((index + 1) / total) * 100}%`,
+              background: card.accent,
+              boxShadow: `0 0 14px ${card.accent}`,
+            }}
+          />
         </div>
       </div>
     </AbsoluteFill>

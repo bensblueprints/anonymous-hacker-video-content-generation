@@ -142,7 +142,7 @@ def main() -> None:
         "-i", str(args.video), "-i", str(args.source),
         "-i", str(assets["static"]), "-i", str(assets["whoosh"]),
         "-i", str(assets["impact"]),
-        "-filter_complex_script", str(filter_script),
+        "-/filter_complex", str(filter_script),
         "-map", "0:v:0", "-map", "[outa]",
         "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
         "-ar", "48000", "-ac", "2", "-t", f"{TOTAL_SECONDS:.9f}",

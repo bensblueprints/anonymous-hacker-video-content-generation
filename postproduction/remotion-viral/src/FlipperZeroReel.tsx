@@ -30,7 +30,8 @@ import {
   majorWashIntensity,
   heavyIntensity,
 } from './effects';
-import {OpeningHook, MajorTitleLabel, EndCta} from './overlays';
+import {OpeningHook, MajorTitleLabel, EndCta, CapabilityCard} from './overlays';
+import {CAPABILITY_CARDS} from './capabilities';
 
 // ============================================
 // FlipperZeroReel — full-length VFX pass over the source video.
@@ -132,6 +133,16 @@ export const FlipperZeroReel: React.FC<{videoSrc: string}> = ({videoSrc}) => {
           accent={topic.accent}
           startFrame={secToFrame(topic.startSec)}
           index={index}
+        />
+      ))}
+
+      {/* --- PowerPoint-style capability/risk/safe-lab cards --- */}
+      {CAPABILITY_CARDS.map((card, index) => (
+        <CapabilityCard
+          key={`${card.startSec}-${card.headline}`}
+          card={card}
+          index={index}
+          total={CAPABILITY_CARDS.length}
         />
       ))}
 
